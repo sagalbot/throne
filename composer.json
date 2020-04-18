@@ -14,6 +14,7 @@
         "graham-campbell/gitlab": "^3.1",
         "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "^7.0",
+        "laravel/socialite": "^4.3",
         "laravel/tinker": "^2.0",
         "php-http/guzzle6-adapter": "^1.1"
     },
