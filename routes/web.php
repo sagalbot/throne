@@ -13,6 +13,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/login/gitlab', 'Auth\LoginController@redirectToProvider');
+Route::get('/login/gitlab/callback', 'Auth\LoginController@handleProviderCallback');
+
+Route::get('/login', function () {
+    return view('login');
+});
+
 Route::get('/', function () {
-    return view('welcome');
+    if( ! auth()->check() ) {
+        return redirect('/login');
+    }
+    return redirect('/dashboard');
+});
+
+Route::get('/dashboard', function () {
+    return view('app');
 });
