@@ -21,12 +21,11 @@ Route::get('/login', function () {
 });
 
 Route::get('/', function () {
-    if( ! auth()->check() ) {
+    if (! auth()->check()) {
         return redirect('/login');
     }
+
     return redirect('/dashboard');
 });
 
-Route::get('/dashboard', function () {
-    return view('app');
-});
+Route::get('/dashboard', 'DashboardController');
