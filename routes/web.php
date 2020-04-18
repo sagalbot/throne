@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginWithGitLabController;
+use App\Http\Controllers\Auth\RedirectToGitLabController;
+use App\Http\Controllers\Auth\ShowLoginController;
+use App\Http\Controllers\ShowGroupsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,20 +17,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/login/gitlab', 'Auth\LoginController@redirectToProvider');
-Route::get('/login/gitlab/callback', 'Auth\LoginController@handleProviderCallback');
-
-Route::get('/login', function () {
-    return view('login');
+Route::group(['middleware' => 'guest'], function () {
+    Route::get('/login', ShowLoginController::class)->name('login');
+    Route::get('/login/gitlab', RedirectToGitLabController::class)->name('login.gitlab.redirect');
+    Route::get('/login/gitlab/callback', LoginWithGitLabController::class)->name('login.gitlab.callback');
 });
 
-Route::get('/', function () {
-    if( ! auth()->check() ) {
-        return redirect('/login');
-    }
-    return redirect('/dashboard');
-});
-
-Route::get('/dashboard', function () {
-    return view('app');
+Route::group(['middleware' => 'auth'], function () {
+    Route::redirect('/', '/groups');
+    Route::get('/groups', ShowGroupsController::class)->name('groups');
 });
