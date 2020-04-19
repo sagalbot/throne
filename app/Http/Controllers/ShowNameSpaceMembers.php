@@ -27,11 +27,18 @@ class ShowNameSpaceMembers extends Controller
 
         $props = [
             'namespace' => $user->group($this->nameSpaceId),
-            'members' => $user->groupMembers($this->nameSpaceId)
+            'members' => $user->groupMembers($this->nameSpaceId),
+            'projectsWithMembers' => $user->projectsInGroup($this->nameSpaceId)->map(function (
+                $project
+            ) use (
+                $user
+            ) {
+                $project['members'] = $user->projectMembers($project['id']);
+
+                return $project;
+            }),
         ];
 
-        return $props;
-
-        //return Inertia::render('Group', $props);
+        return Inertia::render('Group', $props);
     }
 }

@@ -1,8 +1,8 @@
 <template>
     <header class="flex items-center">
-        <img :src="avatar_url" class="w-12 rounded-full border mr-4" />
+        <img :src="avatar_url" class="w-10 rounded-full border mr-4" />
         <div>
-            <h2 class="text-blue-500 text-xl">
+            <h2 class="text-blue-500 text-lg leading-none">
                 <inertia-link
                     :href="route('namespace.projects', { namespace: id })"
                 >

@@ -59,7 +59,7 @@ class User extends Authenticatable
             $client = resolve(Client::class);
             $pager = new Pager($client);
 
-            $group = $pager->fetchAll($client->api('groups'), 'show', [$id]);
+            $group = $pager->fetch($client->api('groups'), 'show', [$id]);
 
             Cache::put($key, $group);
         }
@@ -113,7 +113,7 @@ class User extends Authenticatable
             $pager = new Pager($client);
             $projects = $pager->fetchAll($client->projects(), 'all', [['membership' => true]]);
 
-            Cache::put($key, $projects);
+            Cache::put($key, collect($projects));
         }
 
         return Cache::get($key);
@@ -127,7 +127,9 @@ class User extends Authenticatable
         if (Cache::missing($key)) {
             /** @var Client $client */
             $client = resolve(Client::class);
-            $project = $client->projects()->show($projectId);
+            $pager = new Pager($client);
+
+            $project = $pager->fetch($client->api('projects'), 'show', [$projectId]);
 
             Cache::put($key, $project);
         }
@@ -181,7 +183,7 @@ class User extends Authenticatable
         return Cache::get($key);
     }
 
-    public function projectsInGroup(int $groupId)
+    public function projectsInGroup(int $groupId): Collection
     {
         /** @var GitLabCacheKey $key */
         $key = resolve(GitLabCacheKey::class)('projectsInGroup', $groupId);
