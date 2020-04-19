@@ -25,35 +25,11 @@
 </template>
 <script>
 import NameSpaceHeader from "./NameSpaceHeader";
+import { nameSpaceProps } from "./nameSpaceApi";
 
 export default {
     name: "NameSpace",
     components: { NameSpaceHeader },
-    props: {
-        id: {
-            required: true,
-        },
-        name: {
-            required: true,
-        },
-        web_url: {
-            required: true,
-        },
-        full_path: {
-            required: true,
-        },
-        billable_members_count: {
-            required: true,
-        },
-        avatar_url: {
-            required: true,
-        },
-        members_count_with_descendants: {
-            required: true,
-        },
-        project_members: {
-            required: true,
-        },
-    },
+    props: { ...nameSpaceProps },
 };
 </script>

@@ -3,18 +3,26 @@
         <nav
             class="flex items-baseline justify-between w-full px-5 py-2 border-b border-gray-300"
         >
-            <h1 class="text-gitlab-orange font-bold">
-                <inertia-link href="/" class="flex items-center">
-                    Throne
-                    <GitLabLogo class="w-8" />
-                </inertia-link>
-            </h1>
+            <nav class="flex items-baseline">
+                <h1 class="text-gitlab-orange font-bold mr-5">
+                    <inertia-link href="/" class="flex items-center">
+                        Throne
+                        <GitLabLogo class="w-8" />
+                    </inertia-link>
+                </h1>
 
-            <nav>
-                <inertia-link :href="route('namespaces')">
+                <inertia-link
+                    class="mr-5 hover:text-blue-800"
+                    :class="{ 'text-blue-800': routeActive('namespaces') }"
+                    :href="route('namespaces')"
+                >
                     Namespaces
                 </inertia-link>
-                <inertia-link :href="route('members')">
+                <inertia-link
+                    class="mr-5 hover:text-blue-800"
+                    :class="{ 'text-blue-800': routeActive('members') }"
+                    :href="route('members')"
+                >
                     Members
                 </inertia-link>
             </nav>

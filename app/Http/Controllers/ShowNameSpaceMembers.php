@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 
-class ShowNameSpaceProjectsController extends Controller
+class ShowNameSpaceMembers extends Controller
 {
     /**
      * @var \Illuminate\Routing\Route|object|string|null
@@ -29,6 +29,9 @@ class ShowNameSpaceProjectsController extends Controller
     public function __invoke(Client $client)
     {
         $pager = new ResultPager($client);
+
+
+        //$projects = $client->projects()
 
         if (Cache::missing($this->key)) {
             $groupMembers = collect($client->groups()->members($this->group));
@@ -62,7 +65,9 @@ class ShowNameSpaceProjectsController extends Controller
                 'group'               => $client->groups()->show($this->group),
             ];
 
-            Cache::put($this->key, $props);
+            dd($props);
+
+            //Cache::put($this->key, $props);
         } else {
             $props = Cache::get($this->key);
         }

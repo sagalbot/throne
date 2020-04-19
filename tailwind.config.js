@@ -10,6 +10,7 @@ module.exports = {
     },
     variants: {
         borderStyle: ["last", "first"],
+        borderBottom: ["last"],
     },
     plugins: [],
 };
