@@ -3,8 +3,8 @@
 namespace App;
 
 use App\Cache\GitLabCacheKey;
+use App\Http\Gitlab\Pager;
 use Gitlab\Client;
-use Gitlab\ResultPager;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -38,11 +38,30 @@ class User extends Authenticatable
         if (Cache::missing($key)) {
             /** @var Client $client */
             $client = resolve(Client::class);
-            $pager = new ResultPager($client);
+            $pager = new Pager($client);
 
             $namespaces = $pager->fetchAll($client->namespaces(), 'all');
 
-            Cache::put($key, collect($namespaces));
+            Cache::put($key, $namespaces);
+        }
+
+        return Cache::get($key);
+    }
+
+
+    public function group(int $id)
+    {
+        /** @var GitLabCacheKey $key */
+        $key = resolve(GitLabCacheKey::class)('group', $id);
+
+        if (Cache::missing($key)) {
+            /** @var Client $client */
+            $client = resolve(Client::class);
+            $pager = new Pager($client);
+
+            $group = $pager->fetchAll($client->api('groups'), 'show', [$id]);
+
+            Cache::put($key, $group);
         }
 
         return Cache::get($key);
@@ -56,11 +75,11 @@ class User extends Authenticatable
         if (Cache::missing($key)) {
             /** @var Client $client */
             $client = resolve(Client::class);
-            $pager = new ResultPager($client);
+            $pager = new Pager($client);
 
             $groups = $pager->fetchAll($client->groups(), 'all');
 
-            Cache::put($key, collect($groups));
+            Cache::put($key, $groups);
         }
 
         return Cache::get($key);
@@ -74,10 +93,10 @@ class User extends Authenticatable
         if (Cache::missing($key)) {
             /** @var Client $client */
             $client = resolve(Client::class);
-            $pager = new ResultPager($client);
+            $pager = new Pager($client);
             $groups = $pager->fetchAll($client->groups(), 'subgroups', [$groupId]);
 
-            Cache::put($key, collect($groups));
+            Cache::put($key, $groups);
         }
 
         return Cache::get($key);
@@ -91,10 +110,10 @@ class User extends Authenticatable
         if (Cache::missing($key)) {
             /** @var Client $client */
             $client = resolve(Client::class);
-            $pager = new ResultPager($client);
+            $pager = new Pager($client);
             $projects = $pager->fetchAll($client->projects(), 'all', [['membership' => true]]);
 
-            Cache::put($key, collect($projects));
+            Cache::put($key, $projects);
         }
 
         return Cache::get($key);
@@ -148,14 +167,15 @@ class User extends Authenticatable
         if (Cache::missing($key)) {
             /** @var Client $client */
             $client = resolve(Client::class);
-            $pager = new ResultPager($client);
+            $pager = new Pager($client);
 
-            $members = (object) [
-                'members'            => $pager->fetchAll($client->api($type), 'members', [$id]),
-                'includingInherited' => $pager->fetchAll($client->api($type), 'allMembers', [$id]),
-            ];
+            $members = $pager->fetchAll($client->api($type), 'members', [$id]);
+            $includingInherited = $pager->fetchAll($client->api($type), 'allMembers', [$id]);
 
-            Cache::put($key, $members);
+            Cache::put($key, (object) [
+                'members'            => $members,
+                'includingInherited' => $includingInherited,
+            ]);
         }
 
         return Cache::get($key);
@@ -169,13 +189,13 @@ class User extends Authenticatable
         if (Cache::missing($key)) {
             /** @var Client $client */
             $client = resolve(Client::class);
-            $pager = new ResultPager($client);
+            $pager = new Pager($client);
             $result = $pager->fetchAll($client->groups(), 'projects', [
                 $groupId,
                 ['simple' => true],
             ]);
 
-            Cache::put($key, collect($result));
+            Cache::put($key, $result);
         }
 
         return Cache::get($key);
