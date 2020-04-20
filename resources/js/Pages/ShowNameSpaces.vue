@@ -39,7 +39,7 @@ import NameSpaceRow from "../Components/NameSpace/NameSpaceRow";
 import RootNameSpace from "../Components/NameSpace/RootNameSpace";
 
 export default {
-    name: "Groups",
+    name: "ShowNameSpaces",
     components: { RootNameSpace, NameSpaceRow },
     layout: AppLayout,
     props: {

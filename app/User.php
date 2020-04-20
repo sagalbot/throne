@@ -48,7 +48,6 @@ class User extends Authenticatable
         return Cache::get($key);
     }
 
-
     public function group(int $id)
     {
         /** @var GitLabCacheKey $key */
@@ -161,7 +160,7 @@ class User extends Authenticatable
         return Cache::get($key);
     }
 
-    private function getMembersFor(string $type, int $id)
+    private function getMembersFor(string $type, int $id, $inherited = false)
     {
         /** @var GitLabCacheKey $key */
         $key = resolve(GitLabCacheKey::class)("{$type}.members", $id);
@@ -171,13 +170,9 @@ class User extends Authenticatable
             $client = resolve(Client::class);
             $pager = new Pager($client);
 
-            $members = $pager->fetchAll($client->api($type), 'members', [$id]);
-            $includingInherited = $pager->fetchAll($client->api($type), 'allMembers', [$id]);
+            $members = $pager->fetchAll($client->api($type), $inherited ? 'allMembers' : 'members', [$id]);
 
-            Cache::put($key, (object) [
-                'members'            => $members,
-                'includingInherited' => $includingInherited,
-            ]);
+            Cache::put($key, $members);
         }
 
         return Cache::get($key);

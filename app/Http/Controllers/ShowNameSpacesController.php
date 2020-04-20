@@ -6,7 +6,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Collection;
 use App\Http\Resources\GroupResource;
 
-class ShowNamespacesController extends Controller
+class ShowNameSpacesController extends Controller
 {
     public function __invoke()
     {
@@ -20,7 +20,7 @@ class ShowNamespacesController extends Controller
             return GroupResource::collection($grouped->sortByDesc('billable_members_count'));
         });
 
-        return Inertia::render('ShowNamespaces', [
+        return Inertia::render('ShowNameSpaces', [
             'groups' => $groups,
         ]);
     }

@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\ShowMembersController;
-use App\Http\Controllers\ShowNamespacesController;
-use App\Http\Controllers\ShowNameSpaceMembers;
+use App\Http\Controllers\ShowNameSpacesController;
+use App\Http\Controllers\ShowNameSpaceController;
 
 use App\Http\Controllers\Auth\ShowLoginController;
 use App\Http\Controllers\Auth\LoginWithGitLabController;
@@ -34,8 +34,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('/logout', LogoutController::class)->name('logout');
 
-    Route::get('/namespaces', ShowNamespacesController::class)->name('namespaces');
-    Route::get('/namespaces/{namespace}', ShowNameSpaceMembers::class)->name('namespace.projects');
+    Route::get('/namespaces', ShowNameSpacesController::class)->name('namespaces');
+    Route::get('/namespaces/{namespace}', ShowNameSpaceController::class)->name('namespace.projects');
 
     Route::get('/members', ShowMembersController::class)->name('members');
 
