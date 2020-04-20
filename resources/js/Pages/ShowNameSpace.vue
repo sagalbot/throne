@@ -10,7 +10,7 @@
             <a href=""></a>
         </header>
         <div>
-            <ul class="my-5">
+            <ul class="my-5" v-if="withOutGroupMembers.length">
                 <li class="text-lg font-bold px-5">
                     Members of {{ namespace.name }} through projects
                 </li>
