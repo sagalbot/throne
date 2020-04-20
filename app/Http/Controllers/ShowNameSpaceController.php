@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class ShowNameSpaceController extends Controller
 {
@@ -22,23 +23,32 @@ class ShowNameSpaceController extends Controller
         /** @var \App\User $user */
         $user = auth()->user();
 
-        $projectsWithMembers = $user->projectsInGroup($this->nameSpaceId)->map(function (
-            $project
-        ) use (
-            $user
-        ) {
-            $members = $user->projectMembers($project['id']);
+        $projects = $user->projectsInGroup($this->nameSpaceId);
 
-            $project['members'] = $members;
-            $project['memberCount'] = $members->count();
+        $projectMembers = $projects->mapWithKeys(function ($project) use ($user) {
+            return [
+                $project['id'] => $user->projectMembers($project['id'])->map(function ($member) {
+                    return $member['id'];
+                }),
+            ];
+        });
 
-            return $project;
-        })->sortByDesc('memberCount');
+        $members = $projects->reduce(function (Collection $members, $project) use ($user) {
+            $user->projectMembers($project['id'])->each(function ($projectMember) use ($members) {
+                if (! $members->firstWhere('id', $projectMember['id'])) {
+                    $members->push($projectMember);
+                }
+            });
+
+            return $members;
+        }, collect([]));
 
         $props = [
-            'namespace'           => $user->group($this->nameSpaceId),
-            'members'             => $user->groupMembers($this->nameSpaceId),
-            'projectsWithMembers' => $projectsWithMembers,
+            'namespace'      => $user->group($this->nameSpaceId),
+            'groupMembers'   => $user->groupMembers($this->nameSpaceId),
+            'projectMembers' => $projectMembers,
+            'members'        => $members,
+            'projects'       => $projects,
         ];
 
         return Inertia::render('ShowNameSpace', $props);

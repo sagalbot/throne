@@ -4,7 +4,7 @@
             <img
                 :src="namespace.avatar_url"
                 :alt="namespace.name + ' avatar'"
-                class="w-12 rounded-full border mr-4"
+                class="w-12 mr-4"
             />
             <h1 class="text-2xl">{{ namespace.name }}</h1>
             <a href=""></a>
@@ -12,46 +12,17 @@
         <div>
             <ul class="my-5">
                 <li class="text-lg font-bold px-5">
-                    Members of {{ namespace.name }} projects
+                    Members of {{ namespace.name }} through projects
                 </li>
                 <li
-                    v-for="project in projectsWithMembers"
-                    :key="project.id"
+                    v-for="member in withOutGroupMembers"
+                    :key="member.id"
                     class="flex justify-between items-center border-b last:border-none py-2 px-5"
                 >
-                    <table class="table-auto w-full">
-                        <thead>
-                            <tr>
-                                <th colspan="2">
-                                    <figure class="flex items-center">
-                                        <img
-                                            v-if="project.avatar_url"
-                                            :src="project.avatar_url"
-                                            :alt="project.name"
-                                            class="w-10 h-10 rounded-full mr-5"
-                                        />
-                                        <div
-                                            v-else
-                                            class="w-10 h-10 rounded-full mr-5 bg-purple-200"
-                                        ></div>
-                                        <header>
-                                            <h2>{{ project.name }}</h2>
-                                        </header>
-                                    </figure>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th>name</th>
-                                <th>username</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="member in project.members.members">
-                                <td>{{ member.name }}</td>
-                                <td>{{ member.username }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <Member
+                        v-bind="member"
+                        :projects="projectsForUser(member.id)"
+                    />
                 </li>
             </ul>
 
@@ -60,33 +31,10 @@
                     Members of the {{ namespace.name }} group
                 </li>
                 <li
-                    v-for="member in members.members"
+                    v-for="member in groupMembers"
                     class="flex justify-between items-center border-b last:border-none py-2 px-5"
                 >
-                    <figure class="flex items-center">
-                        <img
-                            :src="member.avatar_url"
-                            :alt="member.username"
-                            class="w-10 h-10 rounded-full mr-5"
-                        />
-                        <header>
-                            <h2>{{ member.name }}</h2>
-                            <a
-                                :href="`https://gitlab.com/`"
-                                target="_blank"
-                                class="text-blue-400"
-                            >
-                                @{{ member.username }}
-                            </a>
-                        </header>
-                    </figure>
-                    <a
-                        :href="namespace.web_url"
-                        target="_blank"
-                        class="text-blue-400"
-                    >
-                        manage
-                    </a>
+                    <Member v-bind="member" />
                 </li>
             </ul>
         </div>
@@ -95,12 +43,33 @@
 
 <script>
 import AppLayout from "../Layouts/AppLayout";
+import Member from "./Member";
 
 export default {
     name: "ShowNameSpace",
+    components: { Member },
     layout: AppLayout,
-    props: ["members", "projectsWithMembers", "namespace"],
+    props: [
+        "namespace",
+        "groupMembers",
+        "projectMembers",
+        "members",
+        "projects",
+    ],
+    computed: {
+        withOutGroupMembers() {
+            const groupMemberIds = this.groupMembers.map(({ id }) => id);
+            return this.members.filter(
+                ({ id }) => !groupMemberIds.includes(id)
+            );
+        },
+    },
+    methods: {
+        projectsForUser(userId) {
+            return this.projects.filter(({ id }) =>
+                this.projectMembers[id].includes(userId)
+            );
+        },
+    },
 };
 </script>
-
-<style scoped></style>
