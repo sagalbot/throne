@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
-class ShowGroupsController extends Controller
+class ShowMembersController extends Controller
 {
     public function __invoke()
     {
-        return Inertia::render('Groups');
+        return Inertia::render('Members');
     }
 }

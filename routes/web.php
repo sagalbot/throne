@@ -1,9 +1,14 @@
 <?php
 
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\ShowMembersController;
+use App\Http\Controllers\ShowNameSpacesController;
+use App\Http\Controllers\ShowNameSpaceController;
+
+use App\Http\Controllers\Auth\ShowLoginController;
 use App\Http\Controllers\Auth\LoginWithGitLabController;
 use App\Http\Controllers\Auth\RedirectToGitLabController;
-use App\Http\Controllers\Auth\ShowLoginController;
-use App\Http\Controllers\ShowGroupsController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,10 +25,28 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => 'guest'], function () {
     Route::get('/login', ShowLoginController::class)->name('login');
     Route::get('/login/gitlab', RedirectToGitLabController::class)->name('login.gitlab.redirect');
-    Route::get('/login/gitlab/callback', LoginWithGitLabController::class)->name('login.gitlab.callback');
+    Route::get('/login/gitlab/callback', LoginWithGitLabController::class)
+         ->name('login.gitlab.callback');
 });
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::redirect('/', '/groups');
-    Route::get('/groups', ShowGroupsController::class)->name('groups');
+    Route::redirect('/', '/namespaces');
+
+    Route::post('/logout', LogoutController::class)->name('logout');
+
+    Route::get('/namespaces', ShowNameSpacesController::class)->name('namespaces');
+    Route::get('/namespaces/{namespace}', ShowNameSpaceController::class)->name('namespace.projects');
+
+    Route::get('/members', ShowMembersController::class)->name('members');
+
+    Route::get('/test', function () {
+        /** @var \App\User $user */
+        $user = auth()->user();
+
+        return $user->projects(true);
+
+        //return $user->projectMembers(8995480);
+        //return $user->subgroups(5642293);
+        //return $user->namespaces();
+    });
 });

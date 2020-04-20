@@ -8,6 +8,9 @@ module.exports = {
             },
         },
     },
-    variants: {},
+    variants: {
+        borderStyle: ["last", "first"],
+        borderBottom: ["last"],
+    },
     plugins: [],
 };
