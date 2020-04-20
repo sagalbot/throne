@@ -8,8 +8,12 @@
             />
             <h2>{{ name }}</h2>
         </header>
-        <ul v-if="projects" class="flex">
-            <li v-for="project in projects" :key="project.id" class="ml-1">
+        <ul v-if="projects" class="max-w-lg">
+            <li
+                v-for="project in projects"
+                :key="project.id"
+                class="ml-1 inline"
+            >
                 <a
                     :href="project.web_url + '/-/project_members'"
                     target="_blank"
